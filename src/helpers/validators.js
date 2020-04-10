@@ -100,7 +100,7 @@ export const validateFieldN7 = (figures) => {
 };
 
 // 8. Не красная и не белая звезда.
-export const validateFieldN8 = ({star, circle}) => {
+export const validateFieldN8 = ({star}) => {
   const isStarNotRed = not(equals(star, 'red'));
   const isStarNotWhite = not(equals(star, 'white'));
 
@@ -108,7 +108,11 @@ export const validateFieldN8 = ({star, circle}) => {
 };
 
 // 9. Все фигуры зеленые.
-export const validateFieldN9 = () => false;
+export const validateFieldN9 = (figures) => {
+  const isGreen = equals('green');
+
+  return all(isGreen)(values(figures));
+};
 
 // 10. Треугольник и квадрат одного цвета (не белого)
 export const validateFieldN10 = () => false;
