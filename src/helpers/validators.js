@@ -15,15 +15,12 @@
 
 import {
   and,
-  any,
   all,
   allPass,
   apply,
   compose,
   countBy,
-  curry,
   equals,
-  isEmpty,
   filter,
   gte,
   length,
@@ -37,12 +34,19 @@ import {
 } from 'ramda';
 
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
-export const validateFieldN1 = ({star, square, triangle, circle}) => {
-    if (triangle !== 'white' || circle !== 'white') {
-        return false;
-    }
+export const validateFieldN1 = (figures) => {
+    const getStar = prop('star');
+    const getSquare = prop('square');
+    const getTriangle = prop('triangle');
+    const getCircle = prop('circle');
 
-    return star === 'red' && square === 'green';
+    const checkIsStarRed = compose(equals('red'), getStar);
+    const checkIsSquareGreen = compose(equals('green'), getSquare);
+    const checkIsTriangleWhite = compose(equals('white'), getTriangle);
+    const checkIsCircleWhite = compose(equals('white'), getCircle);
+
+    const validation = allPass([checkIsStarRed, checkIsSquareGreen, checkIsTriangleWhite, checkIsCircleWhite]);
+    return validation(figures);
 };
 
 // 2. Как минимум две фигуры зеленые.
