@@ -17,6 +17,7 @@ import {
   and,
   all,
   allPass,
+  compose,
   countBy,
   equals,
   filter,
@@ -24,6 +25,7 @@ import {
   length,
   keys,
   not,
+  prop,
   propEq,
   values,
   tap
@@ -115,4 +117,12 @@ export const validateFieldN9 = (figures) => {
 };
 
 // 10. Треугольник и квадрат одного цвета (не белого)
-export const validateFieldN10 = () => false;
+export const validateFieldN10 = (figures) => {
+    const isSquareNotWhite = not(equals(figures.square, 'white'));
+    const isTriangleNotWhite = not(equals(figures.triangle, 'white'));
+    const isSameColor = equals(figures.square, figures.triangle);
+
+    const areNotWhite = and(isSquareNotWhite, isTriangleNotWhite);
+
+    return and(areNotWhite, isSameColor);
+};
