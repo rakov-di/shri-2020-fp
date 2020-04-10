@@ -14,11 +14,13 @@
  */
 
 import {
+  allPass,
   equals,
   filter,
   gte,
   length,
   keys,
+  propEq,
   tap
 } from 'ramda';
 
@@ -37,7 +39,6 @@ export const validateFieldN2 = (figures) => {
   const greenFigures = filter(isGreen, figures);
   const greenFiguresСount = length(keys(greenFigures));
 
-  // tap(console.log());
   return gte(greenFiguresСount, 2);
 };
 
@@ -57,7 +58,14 @@ export const validateFieldN3 = (figures) => {
 };
 
 // 4. Синий круг, красная звезда, оранжевый квадрат
-export const validateFieldN4 = () => false;
+export const validateFieldN4 = ({star, square, circle}) => {
+  const cond1 = propEq('circle', 'blue');
+  const cond2 = propEq('star', 'red');
+  const cond3 = propEq('square', 'orange');
+  const allConds = allPass([cond1, cond2, cond3]);
+
+  return allConds({star, square, circle});
+};
 
 // 5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).
 export const validateFieldN5 = () => false;
