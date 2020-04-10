@@ -1,6 +1,6 @@
 /**
  * @file Домашка по FP ч. 1
- * 
+ *
  * Основная задача — написать самому, или найти в FP библиотеках функции anyPass/allPass
  * Эти функции/их аналоги есть и в ramda и в lodash
  *
@@ -13,6 +13,14 @@
  * Если какие либо функции написаны руками (без использования библиотек) это не является ошибкой
  */
 
+import {
+  filter,
+  gte,
+  length,
+  keys,
+  tap
+} from 'ramda';
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = ({star, square, triangle, circle}) => {
     if (triangle !== 'white' || circle !== 'white') {
@@ -23,7 +31,14 @@ export const validateFieldN1 = ({star, square, triangle, circle}) => {
 };
 
 // 2. Как минимум две фигуры зеленые.
-export const validateFieldN2 = () => false;
+export const validateFieldN2 = (figures) => {
+  const isGreen = figure => figure === 'green';
+  const greenFigures = filter(isGreen, figures);
+  const greenFiguresСount = length(keys(greenFigures));
+
+  // tap(console.log());
+  return gte(greenFiguresСount, 2);
+};
 
 // 3. Количество красных фигур равно кол-ву синих.
 export const validateFieldN3 = () => false;
