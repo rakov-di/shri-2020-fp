@@ -15,17 +15,21 @@
 
 import {
   and,
+  any,
   all,
   allPass,
   apply,
   compose,
   countBy,
+  curry,
   equals,
+  isEmpty,
   filter,
   gte,
   length,
   keys,
   not,
+  omit,
   prop,
   propEq,
   values,
@@ -88,7 +92,43 @@ export const validateFieldN5 = (figures) => {
 };
 
 // 6. Две зеленые фигуры (одна из них треугольник), еще одна любая красная.
-export const validateFieldN6 = () => false;
+export const validateFieldN6 = (figures) => {
+  // Условие можно переформулировать так:
+  // 1. Один зеленый треугольник,
+  // 2. Еще одна любая зеленая
+  // 3. Еще одна любая красная
+
+  const getTriangle = prop('triangle');
+  const isGreen = equals('green');
+  const isRed = equals('red');
+
+  const checkIsTriangleGreen = compose(
+    isGreen,
+    getTriangle
+  );
+
+  const isOne = compose(
+    equals(1),
+    length,
+    keys
+  );
+
+  const checkIsOtherOneGreen = compose(
+    isOne,
+    filter(isGreen),
+    omit(['triangle'])
+  );
+
+  const checkIsOtherOneRed = compose(
+    isOne,
+    filter(isRed),
+    omit(['triangle'])
+  );
+
+  const validate = allPass([checkIsTriangleGreen, checkIsOtherOneRed, checkIsOtherOneGreen]);
+
+  return validate(figures);
+};
 
 // 7. Все фигуры оранжевые.
 export const validateFieldN7 = (figures) => {
