@@ -14,6 +14,7 @@
  */
 
 import {
+  equals,
   filter,
   gte,
   length,
@@ -41,7 +42,19 @@ export const validateFieldN2 = (figures) => {
 };
 
 // 3. Количество красных фигур равно кол-ву синих.
-export const validateFieldN3 = () => false;
+export const validateFieldN3 = (figures) => {
+  const isRed = figure => figure === 'red';
+  const isBlue = figure => figure === 'blue';
+
+  const redFigures = filter(isRed, figures);
+  const redFiguresСount = length(keys(redFigures));
+
+  const blueFigures = filter(isBlue, figures);
+  const blueFiguresСount = length(keys(blueFigures));
+  tap(console.log('hi', redFiguresСount, blueFiguresСount));
+
+  return equals(redFiguresСount, blueFiguresСount)
+};
 
 // 4. Синий круг, красная звезда, оранжевый квадрат
 export const validateFieldN4 = () => false;
