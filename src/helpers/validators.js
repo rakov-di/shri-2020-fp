@@ -14,13 +14,16 @@
  */
 
 import {
+  all,
   allPass,
+  countBy,
   equals,
   filter,
   gte,
   length,
   keys,
   propEq,
+  values,
   tap
 } from 'ramda';
 
@@ -52,7 +55,6 @@ export const validateFieldN3 = (figures) => {
 
   const blueFigures = filter(isBlue, figures);
   const blueFiguresСount = length(keys(blueFigures));
-  tap(console.log('hi', redFiguresСount, blueFiguresСount));
 
   return equals(redFiguresСount, blueFiguresСount)
 };
@@ -68,13 +70,32 @@ export const validateFieldN4 = ({star, square, circle}) => {
 };
 
 // 5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).
-export const validateFieldN5 = () => false;
+export const validateFieldN5 = (figures) => {
+  // const isNotWhite = figure => figure !== 'white';
+  // const notWhiteFigures = filter(isNotWhite, figures);
+  // tap(console.log(notWhiteFigures));
+
+  // const dumb = (color) => color;
+  // const colorsCount = countBy(dumb)(notWhiteFigures);
+  // tap(console.log(colorsCount));
+  // const count = Math.max(values(colorsCount));
+  // tap(console.log(count));
+  // const colors = ['red','orange','green','blue']
+
+  // const notWhiteFiguresСount = length(keys(notWhiteFigures));
+
+  // return
+};
 
 // 6. Две зеленые фигуры (одна из них треугольник), еще одна любая красная.
 export const validateFieldN6 = () => false;
 
 // 7. Все фигуры оранжевые.
-export const validateFieldN7 = () => false;
+export const validateFieldN7 = (figures) => {
+  const isOrange = equals('orange');
+
+  return all(isOrange)(values(figures));
+};
 
 // 8. Не красная и не белая звезда.
 export const validateFieldN8 = () => false;
