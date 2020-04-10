@@ -17,6 +17,7 @@ import {
   and,
   all,
   allPass,
+  apply,
   compose,
   countBy,
   equals,
@@ -75,20 +76,15 @@ export const validateFieldN4 = ({star, square, circle}) => {
 
 // 5. Три фигуры одного любого цвета кроме белого (четыре фигуры одного цвета – это тоже true).
 export const validateFieldN5 = (figures) => {
-  // const isNotWhite = figure => figure !== 'white';
-  // const notWhiteFigures = filter(isNotWhite, figures);
-  // tap(console.log(notWhiteFigures));
+  const isNotWhite = figure => not(equals(figure, 'white'));
+  const notWhiteFigures = filter(isNotWhite, figures);
 
-  // const dumb = (color) => color;
-  // const colorsCount = countBy(dumb)(notWhiteFigures);
-  // tap(console.log(colorsCount));
-  // const count = Math.max(values(colorsCount));
-  // tap(console.log(count));
-  // const colors = ['red','orange','green','blue']
+  const dumb = (color) => color;
+  const colorsCount = values(countBy(dumb)(values(notWhiteFigures)));
 
-  // const notWhiteFiguresСount = length(keys(notWhiteFigures));
+  const max = apply(Math.max, colorsCount);
 
-  // return
+  return gte(max, 3);
 };
 
 // 6. Две зеленые фигуры (одна из них треугольник), еще одна любая красная.
