@@ -14,6 +14,7 @@
  */
 
 import {
+  and,
   all,
   allPass,
   countBy,
@@ -22,6 +23,7 @@ import {
   gte,
   length,
   keys,
+  not,
   propEq,
   values,
   tap
@@ -98,7 +100,12 @@ export const validateFieldN7 = (figures) => {
 };
 
 // 8. Не красная и не белая звезда.
-export const validateFieldN8 = () => false;
+export const validateFieldN8 = ({star, circle}) => {
+  const isStarNotRed = not(equals(star, 'red'));
+  const isStarNotWhite = not(equals(star, 'white'));
+
+  return and(isStarNotRed, isStarNotWhite)
+};
 
 // 9. Все фигуры зеленые.
 export const validateFieldN9 = () => false;
