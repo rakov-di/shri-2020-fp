@@ -35,6 +35,13 @@ import {
   values
 } from 'ramda';
 
+
+const isWhite = equals('white');
+const isRed = equals('red');
+const isOrange = equals('orange');
+const isGreen = equals('green');
+const isBlue = equals('blue');
+
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = (figures) => {
     const getStar = prop('star');
@@ -54,8 +61,6 @@ export const validateFieldN1 = (figures) => {
 
 // 2. Как минимум две фигуры зеленые.
 export const validateFieldN2 = (figures) => {
-  const isGreen = equals('green');
-
   const validation = pipe(filter(isGreen), keys, length, lte(2) );
 
   return validation(figures);
@@ -63,9 +68,6 @@ export const validateFieldN2 = (figures) => {
 
 // 3. Количество красных фигур равно кол-ву синих.
 export const validateFieldN3 = (figures) => {
-  const isRed = equals('red');
-  const isBlue = equals('blue');
-
   const redFiguresCount = pipe(filter(isRed), keys, length);
   const blueFiguresCount = pipe(filter(isBlue), keys, length);
 
@@ -109,8 +111,6 @@ export const validateFieldN6 = (figures) => {
   // 3. Еще одна любая красная
 
   const getTriangle = prop('triangle');
-  const isGreen = equals('green');
-  const isRed = equals('red');
   const isOne = pipe(keys, length, equals(1));
 
   const checkIsTriangleGreen = pipe(getTriangle, isGreen);
@@ -124,8 +124,6 @@ export const validateFieldN6 = (figures) => {
 
 // 7. Все фигуры оранжевые.
 export const validateFieldN7 = (figures) => {
-  const isOrange = equals('orange');
-
   const validation = pipe(values, all(isOrange));
 
   return validation(figures);
@@ -133,9 +131,6 @@ export const validateFieldN7 = (figures) => {
 
 // 8. Не красная и не белая звезда.
 export const validateFieldN8 = ({star}) => {
-  const isRed = equals('red');
-  const isWhite = equals('white');
-
   const isStarNotRed = pipe(isRed, not);
   const isStarNotWhite = pipe(isWhite, not);
 
@@ -150,9 +145,9 @@ export const validateFieldN8 = ({star}) => {
 
 // 9. Все фигуры зеленые.
 export const validateFieldN9 = (figures) => {
-  const isGreen = equals('green');
+  const validation = pipe(values, all(isGreen));
 
-  return all(isGreen)(values(figures));
+  return validation(figures);
 };
 
 // 10. Треугольник и квадрат одного цвета (не белого)
