@@ -31,14 +31,26 @@ import {
 
 const api = new Api();
 
-/**
- * Я – пример, удали меня
- */
-const wait = time => new Promise(resolve => {
-    setTimeout(resolve, time);
-});
+// /**
+//  * Я – пример, удали меня
+//  */
+// const wait = time => new Promise(resolve => {
+//     setTimeout(resolve, time);
+// });
 
-const processSequence = ({value, writeLog, handleSuccess, handleError}) => {
+
+
+const changeNumberSystem = async (number, from, to) => {
+  const url = 'https://api.tech/numbers/base';
+  const params = { number, from, to };
+
+  return await api.get(url, params)
+    .then(response => response.result)
+    .catch(error => error.message)
+};
+
+
+const processSequence = async ({value, writeLog, handleSuccess, handleError}) => {
     /**
      * Я – пример, удали меня
      */
@@ -69,17 +81,21 @@ const processSequence = ({value, writeLog, handleSuccess, handleError}) => {
       isNum
     ]);
 
-    tap(console.log(checkIsLongerThan2(value),
-      checkIsShorterThan10(value),
-      checkIsMoreThan0(value),
-      isNum(value)));
+    // tap(console.log(checkIsLongerThan2(value),
+    //   checkIsShorterThan10(value),
+    //   checkIsMoreThan0(value),
+    //   isNum(value)));
 
     const isValid = checkIsValid(value);
 
-    tap(console.log(isValid));
-
     isValid ? writeLog('isValid: ' + true) : handleError('ValidationError');
 
+    const valueRounded = Math.round(value);
+
+    writeLog('valueRounded: ' + valueRounded)
+
+    const binaryValue = await changeNumberSystem(valueRounded, 10, 2);
+    writeLog('binaryValue: ' + binaryValue)
     // validation(value)
 
     // api.get('https://api.tech/numbers/base', {from: 2, to: 10, number: '01011010101'}).then(({result}) => {
