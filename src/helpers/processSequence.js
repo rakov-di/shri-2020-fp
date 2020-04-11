@@ -16,6 +16,7 @@
  */
 import Api from '../tools/api';
 import {
+  __,
   allPass,
   gt,
   compose,
@@ -23,6 +24,7 @@ import {
   includes,
   length,
   lt,
+  partial,
   range,
   split,
   tap,
@@ -38,14 +40,21 @@ const api = new Api();
 //     setTimeout(resolve, time);
 // });
 
-
-
 const changeNumberSystem = async (number, from, to) => {
   const url = 'https://api.tech/numbers/base';
   const params = { number, from, to };
 
   return await api.get(url, params)
     .then(response => response.result)
+    .catch(error => error.message)
+};
+
+const getAnimal = async (id) => {
+  const url = `https://animals.tech/${id}`;
+
+  return await api.get(url, {})
+    .then(response => response.result)
+
     .catch(error => error.message)
 };
 
@@ -91,28 +100,38 @@ const processSequence = async ({value, writeLog, handleSuccess, handleError}) =>
     isValid ? writeLog('isValid: ' + true) : handleError('ValidationError');
 
     const valueRounded = Math.round(value);
-
-    writeLog('valueRounded: ' + valueRounded)
+    writeLog('valueRounded: ' + valueRounded);
 
     const binaryValue = await changeNumberSystem(valueRounded, 10, 2);
-    writeLog('binaryValue: ' + binaryValue)
-    // validation(value)
+    writeLog('binaryValue: ' + binaryValue);
 
-    // api.get('https://api.tech/numbers/base', {from: 2, to: 10, number: '01011010101'}).then(({result}) => {
-    //     writeLog(result);
-    // });
-    //
-    // wait(2500).then(() => {
-    //     writeLog('SecondLog')
-    //
-    //     return wait(1500);
-    // }).then(() => {
-    //     writeLog('ThirdLog');
-    //
-    //     return wait(400);
-    // }).then(() => {
-    //     handleSuccess('Done');
-    // });
+    const binaryValueSymCount = length(binaryValue);
+    writeLog('binaryValueSymCount: ' + binaryValueSymCount);
+
+    // const powCarried = partial(Math.pow(__, 2))
+    const squareNum = (num) => Math.pow(num, 2);
+    const mod = (num) => num % 3;
+
+    const writeLogFunc = value => {
+      writeLog(value);
+      return value;
+    };
+
+    const getAnimalAsync = async (value) => await getAnimal(value);
+    const answer = compose(
+      // writeLogFunc,
+      // await getAnimal,
+      writeLogFunc,
+      mod,
+      writeLogFunc,
+      squareNum,
+      writeLogFunc,
+      length
+    );
+
+    // const result = answer(binaryValue);
+
+    const a = handleSuccess(await getAnimal(answer(binaryValue)));
 };
 
 export default processSequence;
