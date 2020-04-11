@@ -16,122 +16,85 @@
  */
 import Api from '../tools/api';
 import {
-  __,
   allPass,
+  andThen,
   gt,
   compose,
   ifElse,
-  includes,
   length,
   lt,
-  partial,
-  range,
-  split,
+  otherwise,
+  pipe,
+  prop,
   tap,
   test
 } from 'ramda';
 
 const api = new Api();
 
-// /**
-//  * Я – пример, удали меня
-//  */
-// const wait = time => new Promise(resolve => {
-//     setTimeout(resolve, time);
-// });
+const processSequence = ({ value, writeLog, handleSuccess, handleError }) => {
+  const isValid = allPass([
+    compose(gt(10), length),
+    compose(lt(2), length),
+    test(/^(\d+\.)?\d+$/)
+  ]);
 
-const changeNumberSystem = async (number, from, to) => {
-  const url = 'https://api.tech/numbers/base';
-  const params = { number, from, to };
+  const toNum = val => Number(val);
+  const roundNum = num => Math.round(num);
+  const squareNum = num => Math.pow(num, 2);
+  const mod3 = num => num % 3;
 
-  return await api.get(url, params)
-    .then(response => response.result)
-    .catch(error => error.message)
-};
+  const toBinary = number => api.get('https://api.tech/numbers/base', { number, from: 10, to: 2 });
+  const getAnimal = num => api.get(`https://animals.tech/${num}`, {});
 
-const getAnimal = async (id) => {
-  const url = `https://animals.tech/${id}`;
+  const doGetAnimal = pipe(
+    getAnimal,
+    andThen(
+      pipe(
+        prop('result'),
+        handleSuccess
+      )
+    ),
+    otherwise(handleError)
+  );
 
-  return await api.get(url, {})
-    .then(response => response.result)
+  const doToBinary = pipe(
+    toBinary,
+    andThen(
+      pipe(
+        prop('result'),
+        tap(writeLog),
+        length,
+        tap(writeLog),
+        squareNum,
+        tap(writeLog),
+        mod3,
+        tap(writeLog),
+        doGetAnimal,
+      )
+    ),
+    otherwise(handleError)
+  );
 
-    .catch(error => error.message)
-};
+  const doIfValid = pipe(
+    toNum,
+    roundNum,
+    tap(writeLog),
+    doToBinary
+  );
 
+  const doIfError = () => handleError('ValidationError');
 
-const processSequence = async ({value, writeLog, handleSuccess, handleError}) => {
-    /**
-     * Я – пример, удали меня
-     */
+  const validation =  pipe(
+    tap(writeLog),
+    ifElse(
+      isValid,
+      doIfValid,
+      doIfError
+    )
+  );
 
-    writeLog(value);
-
-    const checkIsLongerThan2 = compose(
-      lt(2),
-      length,
-      split('')
-    );
-
-    const checkIsShorterThan10 = compose(
-      gt(10),
-      length,
-      split('')
-    );
-
-    // TODO переписать чтоб работало, а то тут и на >0 и на число впроверяется одновременно
-    const checkIsMoreThan0 = lt(0);
-
-    const isNum = compose(test(/([0-9]|\.)/g));
-
-    const checkIsValid = allPass([
-      checkIsLongerThan2,
-      checkIsShorterThan10,
-      checkIsMoreThan0,
-      isNum
-    ]);
-
-    // tap(console.log(checkIsLongerThan2(value),
-    //   checkIsShorterThan10(value),
-    //   checkIsMoreThan0(value),
-    //   isNum(value)));
-
-    const isValid = checkIsValid(value);
-
-    isValid ? writeLog('isValid: ' + true) : handleError('ValidationError');
-
-    const valueRounded = Math.round(value);
-    writeLog('valueRounded: ' + valueRounded);
-
-    const binaryValue = await changeNumberSystem(valueRounded, 10, 2);
-    writeLog('binaryValue: ' + binaryValue);
-
-    const binaryValueSymCount = length(binaryValue);
-    writeLog('binaryValueSymCount: ' + binaryValueSymCount);
-
-    // const powCarried = partial(Math.pow(__, 2))
-    const squareNum = (num) => Math.pow(num, 2);
-    const mod = (num) => num % 3;
-
-    const writeLogFunc = value => {
-      writeLog(value);
-      return value;
-    };
-
-    const getAnimalAsync = async (value) => await getAnimal(value);
-    const answer = compose(
-      // writeLogFunc,
-      // await getAnimal,
-      writeLogFunc,
-      mod,
-      writeLogFunc,
-      squareNum,
-      writeLogFunc,
-      length
-    );
-
-    // const result = answer(binaryValue);
-
-    const a = handleSuccess(await getAnimal(answer(binaryValue)));
+  return validation(value);
 };
 
 export default processSequence;
