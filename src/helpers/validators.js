@@ -116,11 +116,11 @@ export const validateFieldN6 = (figures) => {
   // 3. Еще одна любая красная
 
   const getTriangle = prop('triangle');
-  const isOne = pipe(keys, length, equals(1));
+  const isMoreThanOne = pipe(keys, length, lte(1));
 
   const checkIsTriangleGreen = pipe(getTriangle, isGreen);
-  const checkIsOtherOneGreen = pipe(omit(['triangle']), filter(isGreen), isOne);
-  const checkIsOtherOneRed = pipe(omit(['triangle']), filter(isRed), isOne);
+  const checkIsOtherOneGreen = pipe(omit(['triangle']), filter(isGreen), isMoreThanOne);
+  const checkIsOtherOneRed = pipe(omit(['triangle']), filter(isRed), isMoreThanOne);
 
   const validate = allPass([checkIsTriangleGreen, checkIsOtherOneRed, checkIsOtherOneGreen]);
 
